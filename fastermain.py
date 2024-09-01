@@ -170,7 +170,7 @@ def recognize_symbols(cells, templates):
                 best_score = max_val
                 best_match = symbol
         
-        symbols.append(best_match if best_score > 0.17 else '') # threshold amount
+        symbols.append(best_match if best_score > 0.17 else '')
     
     return symbols
 
@@ -192,7 +192,6 @@ def create_sudoku_from_image(image_path, templates):
                 sudoku.add_constraint((row-1, col), (row, col), 'black_dot')
     
     return sudoku, symbols
-
 
 def visualize_detected_symbols(image_path, symbols):
     img = cv2.imread(image_path)
@@ -245,6 +244,15 @@ def list_directory_contents(path):
     for item in os.listdir(path):
         logger.info(f"  - {item}")
 
+def transpose(matrix):
+    rows = len(matrix)
+    cols = len(matrix[0])
+    transposed = [[0] * rows for _ in range(cols)]
+    for i in range(rows):
+        for j in range(cols):
+            transposed[j][i] = matrix[i][j]
+    return transposed
+
 if __name__ == "__main__":
     current_dir = os.path.dirname(os.path.abspath(__file__))
     logger.info(f"Current directory: {current_dir}")
@@ -275,8 +283,14 @@ if __name__ == "__main__":
 
         if sudoku.solve():
             logger.info("Sudoku solved successfully.")
-            print("Solved Sudoku:")
+            print("Solved Sudoku (before transposition):")
             print(sudoku.grid)
+            
+            # Transpose the solution
+            transposed_solution = transpose(sudoku.grid.tolist())
+            print("Solved Sudoku (after transposition):")
+            for row in transposed_solution:
+                print(row)
         else:
             logger.info("No solution exists for the Sudoku puzzle.")
             print("No solution exists")
